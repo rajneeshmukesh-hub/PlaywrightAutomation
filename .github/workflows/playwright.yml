@@ -7,36 +7,38 @@ on:
 
 jobs:
   playwright:
-    name: 'Playwright - ${{ matrix.browser }}'
+    name: 'Playwright E2E Tests - Ubuntu'
     runs-on: ubuntu-latest
-    
-    # Define the matrix strategy for parallel execution
-    strategy:
-      fail-fast: false # Prevents one browser failure from canceling the other browser runs
-      matrix:
-        browser: [chromium, firefox, webkit]
-
-    # FIX: Updated to match your project's updated Playwright version (1.63.0)
-    container:
-        image: ://microsoft.com
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip' # Speeds up sequential workflow runs
+
+      - name: Install Project Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Playwright Tests
-        # Dynamically passes the browser from the matrix and forces sync execution
-        run: pytest --browser ${{ matrix.browser }} -p no:asyncio
+      - name: Install Playwright & Linux Dependencies
+        # This matches the 'playwright install chromium' you ran locally
+        # adding system-level dependencies required for Ubuntu instances
+        run: |
+          pip install playwright
+          playwright install chromium --with-deps
 
-      - name: Upload Test Report
-        # This executes even if the tests fail, preserving your screenshots and videos
-        if: always()
+      - name: Run Playwright Tests
+        # Runs the suite exactly how you called it locally using your pytest.ini options
+        run: pytest
+
+      - name: Upload Test HTML & Allure Reports
+        if: always() # Ensures reports upload even if tests fail in the future
         uses: actions/upload-artifact@v4
         with:
-          name: pytest-report-${{ matrix.browser }}
+          name: playright-test-results
           path: reports/
