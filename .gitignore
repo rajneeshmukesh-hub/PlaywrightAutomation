@@ -1,0 +1,46 @@
+# ==========================================
+# Python & Framework Caches
+# ==========================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.cache/
+
+# ==========================================
+# Virtual Environments (Local Packages)
+# ==========================================
+.venv/
+venv/
+ENV/
+env/
+
+# ==========================================
+# Test Automation Artifacts & Reports
+# ==========================================
+# Exclude locally generated Allure dashboards and JSON logs
+allure-report/
+allure-results/
+reports/allure-results/
+reports/allure-report/
+
+# Exclude standalone HTML execution logs
+reports/myreport.html
+*.html
+
+# Exclude screenshots, recorded videos, and heavy Playwright traces
+reports/screenshots/
+reports/videos/
+reports/traces/
+*.png
+*.webm
+*.zip
+
+# ==========================================
+# IDEs and System Specific Files
+# ==========================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

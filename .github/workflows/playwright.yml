@@ -1,0 +1,42 @@
+name: Playwright Tests
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  playwright:
+    name: 'Playwright - ${{ matrix.browser }}'
+    runs-on: ubuntu-latest
+    
+    # Define the matrix strategy for parallel execution
+    strategy:
+      fail-fast: false # Prevents one browser failure from canceling the other browser runs
+      matrix:
+        browser: [chromium, firefox, webkit]
+
+    # Microsoft's official Docker image contains all system dependencies for the browsers
+    container:
+        image: mcr.microsoft.com/playwright/python:v1.55.0-noble
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Playwright Tests
+        # Dynamically passes the browser from the matrix and forces sync execution
+        run: pytest --browser ${{ matrix.browser }} -p no:asyncio
+
+      - name: Upload Test Report
+        # This executes even if the tests fail, preserving your screenshots and videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report-${{ matrix.browser }}
+          path: reports/
