@@ -16,9 +16,9 @@ jobs:
       matrix:
         browser: [chromium, firefox, webkit]
 
-    # Microsoft's official Docker image contains all system dependencies for the browsers
+    # FIX: Updated to match your project's updated Playwright version (1.63.0)
     container:
-        image: mcr.microsoft.com/playwright/python:v1.55.0-noble
+        image: ://microsoft.com
 
     steps:
       - name: Checkout Code
